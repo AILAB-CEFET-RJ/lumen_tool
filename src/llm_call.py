@@ -1,5 +1,6 @@
 import json
 import ollama
+import sys
 
 def avaliar_redacao(json_input: str) -> str:
     """
@@ -8,15 +9,12 @@ def avaliar_redacao(json_input: str) -> str:
     """
     # Parse JSON
     data = json.loads(json_input)
-    redacao = data 
-
-    # Acessa o primeiro elemento (dicionário) da lista # por enquanto (acima), acessa direto às chaves como se o JSON fossem um único dicionário, só que é uma lista de dicionários (modificar depois)
-    #redacao = data[0] 
+    redacao = data[0]
 
     # Obtém dados do dicionário da redação
     tema = redacao["tema"]
     texto = redacao["texto"]
-    competencias_dados = redacao["competencias"] 
+    competencias_dados = redacao["competencias"]
 
     # Monta o system prompt com as competências
     competencias_str = "\n".join([
@@ -36,11 +34,11 @@ def avaliar_redacao(json_input: str) -> str:
         f"**Competências Avaliadas:**\n{competencias_str}\n\n"
         "Apresente sua resposta no seguinte formato:\n\n"
         "**Sugestões de Melhoria (uma por competência):**\n"
-        "1. **Competência [V]** (Nota: [nota]): [Sugestão concisa]\n"
-        "2. **Competência [W]** (Nota: [nota]): [Sugestão concisa]\n"
-        "3. **Competência [XX]** (Nota: [nota]): [Sugestão concisa]\n"
-        "4. **Competência [Y]** (Nota: [nota]): [Sugestão concisa]\n"
-        "5. **Competência [Z]** (Nota: [nota]): [Sugestão concisa]\n\n"
+        "**Competência 1** (Nota: [nota]): [Sugestão concisa]\n"
+        "**Competência 2** (Nota: [nota]): [Sugestão concisa]\n"
+        "**Competência 3** (Nota: [nota]): [Sugestão concisa]\n"
+        "**Competência 4** (Nota: [nota]): [Sugestão concisa]\n"
+        "**Competência 5** (Nota: [nota]): [Sugestão concisa]\n\n"
         "Guie-se pelas notas fornecidas e pelo conteúdo do texto para cada sugestão."
         "[Para cada competência, gere até 3 sugestões focadas nessa competência, levando em conta o conteúdo da redação, o escopo do tema e a nota recebida]\n"
         "---\n\n"
@@ -71,37 +69,64 @@ def avaliar_redacao(json_input: str) -> str:
     )
 
     return response["message"]["content"]
-    
 
-# Exemplo de uso
+
+## __main__
 if __name__ == "__main__":
-    json_input_example = json.dumps([{
-        "tema": "Privatização do saneamento básico",
-        "texto": "Hegel discorre sobre a importância de um pensamento bilateral para a formação da consciência dos indivíduos, que consiste em estar no mundo e ver o mundo por completo. Destarte, tal direito constitucional converte a ser pouco igualitário e torna-se um reflexo da sociedade contemporânea, na qual as relações de lucro e interesse predominam.Portanto, cabe ao Poder Executivo promover uma reestruturação nos complexos sanitários mediante a correta distribuição de capital público. Assim, o poder não deixar de emanar sobre o povo e o pensamento de Hegel tornar-se-à uma realidade para essa geração e futuras.",
-        "texto_comentado": "()Hegel discorre sobre a importância de um pensamento bilateral para a formação da consciência dos indivíduos, que consiste em estar no mundo e ver o mundo por completo. Destarte, tal direito constitucional converte a ser pouco igualitário e torna-se um reflexo da sociedade contemporânea, na qual as relações de lucro e interesse predominam.(Explore mais os argumentos)(Boa estratégia coesiva)Portanto, cabe ao Poder Executivo (Boa. Apresenta o agente e faz o detalhamento)promover uma reestruturação nos complexos sanitários mediante a correta distribuição de capital público. Assim, o poder não deixar de emanar sobre o povo e o pensamento de Hegel tornar-se-à uma realidade para essa geração e futuras.(A proposta está incompleta)",
-        "comentarios": "Ótima produção textual. Mantenha os aspectos positivos. Não deixe de exercitar a sua escrita.",
-        "nota": "850.0",
-        "titulo": "\"...\"",
-        "id": "16178",
-        "link": "https://vestibular.brasilescola.uol.com.br/banco-de-redacoes/16178",
-        "competencias": [
-            {"competencia": "Domínio da modalidade escrita formal", "nota": "150"},
-            {"competencia": "Compreender a proposta e aplicar conceitos das várias áreas de conhecimento para desenvolver o texto dissertativo-argumentativo em prosa", "nota": "200" },
-            {"competencia": "Selecionar, relacionar, organizar e interpretar informações em defesa de um ponto de vista", "nota": "150"},
-            {"competencia": "Conhecimento dos mecanismos linguísticos necessários para a construção da argumentação", "nota": "200"},
-            {"competencia": "Proposta de intervenção com respeito aos direitos humanos", "nota": "150"}
-        ],
-        "contexto_tema": "A possível privatização do saneamento básico tem levantado uma série de discussões que se mostram contra e a favor. Apesar de ter como ideia fundamental levar água tratada aos que não possuem acesso, tendo em vista a falta de investimento público, por exemplo, muitos se mostram contra argumentando que essa estratégia vai dificultar ainda mais o acesso a esse serviço. Tendo isso em vista, a proposta do Banco de Redações do mês de agosto é que você desenvolva uma redação sobre o seguinte tema: Privatização do saneamento básico"
-    }])
+    try:
+        # Obtém o nome do arquivo via argumento ou entrada do usuário
+        if len(sys.argv) > 1:
+            filename = sys.argv[1]
+        else:
+            filename = input("Digite o nome do arquivo JSON a ser processado: ")
 
-    resultado = avaliar_redacao(json_input_example)
+        # Lê o arquivo JSON
+        with open(filename, "r", encoding="utf-8") as file:
+            data = json.load(file)
 
-    # Após texto gerado pelo LLM como comentários/sugestão:
-    if not redacao.get("cometarios", "").strip():
-        redacao["cometarios"] = resultado  # Substitui VAZIO pelo conteúdo gerado
-    else:
-        redacao["cometarios"] += "\n\n" + resultado   # Para manter o comentário existente e adicionar novo comentário do ITS
+        # Mostra opção de escolha da redação
+        num_redacoes = len(data)
+        if num_redacoes == 0:
+            raise ValueError("O arquivo não contém redações válidas.")
 
+        print(f"Existem {num_redacoes} redações no arquivo. Escolha um número entre 1 e {num_redacoes}:")
+
+        while True:
+            try:
+                escolha = int(input("Número da redação: "))
+                if 1 <= escolha <= num_redacoes:
+                    redacao_index = escolha - 1
+                    break
+                else:
+                    print("Número inválido. Tente novamente.")
+            except ValueError:
+                print("Digite um número válido.")
+
+        # Seleciona a redação escolhida
+        redacao = data[redacao_index]
+
+        # Processa a redação escolhida
+        json_input = json.dumps([redacao])  # Passa apenas a redação selecionada
+        resultado = avaliar_redacao(json_input)
+
+        # Atualiza o campo "cometarios"
+        if not redacao.get("cometarios", "").strip():
+            redacao["cometarios"] = resultado
+        else:
+            redacao["cometarios"] += "\n\n" + resultado
+
+        # Exibe o resultado final
+        print("Resultado da avaliação:")
+        print(json.dumps(redacao, indent=4, ensure_ascii=False))
+
+    except FileNotFoundError:
+        print(f"Erro: O arquivo '{filename}' não foi encontrado. [[1]]")
+    except json.JSONDecodeError:
+        print(f"Erro: O conteúdo do arquivo '{filename}' não é um JSON válido. [[1]]")
+    except ValueError as e:
+        print(f"Erro: {str(e)}. [[2]]")
+    except Exception as e:
+        print(f"Erro inesperado: {str(e)}. [[2]]")
 
     print(resultado)
-    print(resultado)
+
