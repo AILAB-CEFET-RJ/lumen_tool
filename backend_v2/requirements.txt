@@ -1,0 +1,10 @@
+numpy
+flask
+pandas
+scikit-learn
+flask-cors
+python-dotenv
+azure-cognitiveservices-vision-computervision
+pillow
+pymongo
+bcrypt
