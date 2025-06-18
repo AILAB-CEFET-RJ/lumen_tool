@@ -1,7 +1,9 @@
+import database
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from bson import ObjectId
-from functions import evaluate_redacao, persist_essay, get_text, get_llm_feedback
+from functions import evaluate_redacao, persist_essay, get_text
+from llm import get_llm_feedback
 from flask_cors import CORS
 import bcrypt
 import os
@@ -9,13 +11,18 @@ import os
 app = Flask(__name__)
 CORS(app) 
 
-mongo_uri = os.getenv('MONGO_URI')
-client = MongoClient(mongo_uri)
-db = client.textgrader
+
+competencias = {
+    "comp1":"Domínio da modalidade escrita formal",
+    "comp2":"Compreender a proposta e aplicar conceitos das várias áreas de conhecimento para desenvolver o texto dissertativo-argumentativo em prosa",
+    "comp3":"Selecionar, relacionar, organizar e interpretar informações em defesa de um ponto de vista",
+    "comp4":"Conhecimento dos mecanismos linguísticos necessários para a construção da argumentação",
+    "comp5":"Proposta de intervenção com respeito aos direitos humanos",
+}
 
 
 @app.route("/")
-def primeiro_endpoint_get():
+def health():
     return ("OK!", 200)
 
 
@@ -33,36 +40,38 @@ def post_model_response():
     obj = evaluate_redacao(essay)
 
     grades = {
-        "nota1": float(obj.get('nota_1', 0)),
-        "nota2": float(obj.get('nota_2', 0)),
-        "nota3": float(obj.get('nota_3', 0)),
-        "nota4": float(obj.get('nota_4', 0)),
-        "nota5": float(obj.get('nota_5', 0))
+        competencias["comp1"]: float(obj.get('nota_1', 0)),
+        competencias["comp2"]: float(obj.get('nota_2', 0)),
+        competencias["comp3"]: float(obj.get('nota_3', 0)),
+        competencias["comp4"]: float(obj.get('nota_4', 0)),
+        competencias["comp5"]: float(obj.get('nota_5', 0))
     }
 
-    feedback_llm = get_llm_feedback(essay, grades)
+    theme = database.get_tema(id_theme)
+    feedback_llm = get_llm_feedback(essay, grades, theme)
 
     essay_data = {
         "titulo": title,
         "texto": rest_of_essay.strip(),
-        "nota_competencia_1_model": grades['nota1'],
-        "nota_competencia_2_model": grades['nota2'],
-        "nota_competencia_3_model": grades['nota3'],
-        "nota_competencia_4_model": grades['nota4'],
-        "nota_competencia_5_model": grades['nota5'],
+        "nota_competencia_1_model": grades[competencias["comp1"]],
+        "nota_competencia_2_model": grades[competencias["comp2"]],
+        "nota_competencia_3_model": grades[competencias["comp3"]],
+        "nota_competencia_4_model": grades[competencias["comp4"]],
+        "nota_competencia_5_model": grades[competencias["comp5"]],
         "nota_total": sum(grades.values()),
         "nota_professor": "",
         "id_tema": id_theme,
         "aluno": student,
-        "feedback_llm": feedback_llm
+        "feedback_llm": feedback_llm,
+        "competencias": competencias
     }
 
 
 
-    essays_collection = db.redacoes
+    essays_collection = database.db.redacoes
     essays_collection.insert_one(essay_data).inserted_id
 
-    response = jsonify({"grades": obj})
+    response = jsonify({"grades": grades})
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
@@ -104,7 +113,7 @@ def post_model_response_witht_ocr():
         "feedback_llm": feedback_llm,
     }
 
-    essays_collection = db.redacoes
+    essays_collection = database.db.redacoes
     essays_collection.insert_one(essay_data).inserted_id
 
     response = jsonify({"grades": obj})
@@ -123,16 +132,9 @@ def create_user():
 
     hashed_password = bcrypt.hashpw(user_data['password'].encode('utf-8'), bcrypt.gensalt())
 
-    users_collection = db.users
+    database.insert_user(user_data, hashed_password)
 
-    user_id = users_collection.insert_one({
-        "email": user_data['email'],
-        "password": hashed_password,
-        "username": user_data['nomeUsuario'],
-        "tipoUsuario": user_data.get('tipoUsuario', 'usuario')
-    }).inserted_id
-
-    return jsonify({"message": "Usuário criado com sucesso", "user_id": str(user_id)}), 201
+    return jsonify({"message": "Usuário criado com sucesso"}), 201
 
 
 @app.post("/userLogin")
@@ -142,8 +144,7 @@ def login():
     if 'email' not in user_data or 'password' not in user_data:
         return jsonify({"error": "Dados insuficientes"}), 400
 
-    users_collection = db.users
-    user = users_collection.find_one({"email": user_data['email']})
+    user = database.login(user_data)
 
     if user:
         if bcrypt.checkpw(user_data['password'].encode('utf-8'), user['password']):
@@ -159,13 +160,7 @@ def login():
 
 @app.get("/users/alunos")
 def get_alunos():
-    users_collection = db.users
-    alunos = list(users_collection.find({"tipoUsuario": "aluno"}))
-
-    for aluno in alunos:
-        aluno['_id'] = str(aluno['_id'])  # Convertendo ObjectId para string
-        aluno.pop('password', None)  # Remove o campo 'password' para evitar problemas com bytes
-
+    alunos = database.get_alunos()
     response = jsonify(alunos)
     response.headers.add('Access-Control-Allow-Origin', '*')
 
@@ -174,10 +169,7 @@ def get_alunos():
 
 @app.get("/temas")
 def get_temas():
-    temas_collection = db.temas
-    temas = list(temas_collection.find())
-    for tema in temas:
-        tema['_id'] = str(tema['_id'])
+    temas = database.get_temas()
     return jsonify(temas)
 
 
@@ -187,27 +179,17 @@ def create_tema():
     if 'nome_professor' not in tema_data or 'tema' not in tema_data or 'descricao' not in tema_data:
         return jsonify({"error": "Dados insuficientes"}), 400
 
-    temas_collection = db.temas
-    tema_id = temas_collection.insert_one(tema_data).inserted_id
-    return jsonify({"message": "Tema criado com sucesso", "tema_id": str(tema_id)}), 201
+    database.create_tema(tema_data)
+    return jsonify({"message": "Tema criado com sucesso"}), 201
 
 
 @app.put("/temas/<id>")
 def update_tema(id):
-    temas_collection = db.temas
-
     try:
         object_id = ObjectId(id)
         data = request.json
 
-        result = temas_collection.update_one(
-            {"_id": object_id},
-            {"$set": {
-                "tema": data.get("tema"),
-                "descricao": data.get("descricao"),
-                "nome_professor": data.get("nome_professor")
-            }}
-        )
+        result = database.update_tema(object_id, data)
 
         if result.matched_count == 1:
             if result.modified_count == 1:
@@ -222,10 +204,9 @@ def update_tema(id):
 
 @app.delete("/temas/<id>")
 def delete_tema(id):
-    temas_collection = db.temas
     try:
         object_id = ObjectId(id)
-        result = temas_collection.delete_one({"_id": object_id})  #
+        result = database.delete_tema(object_id)
 
         if result.deleted_count == 1:
             return jsonify({"message": "Tema deletado com sucesso!"}), 200
@@ -238,13 +219,7 @@ def delete_tema(id):
 @app.get("/redacoes")
 def get_redacoes():
     user_name = request.args.get("user")
-    redacoes_collection = db.redacoes
-    if user_name is not None:
-        redacoes = list(redacoes_collection.find({"aluno": user_name}))
-    else:
-        redacoes = list(redacoes_collection.find())
-    for redacao in redacoes:
-        redacao['_id'] = str(redacao['_id'])
+    redacoes = database.get_redacoes(user_name)
     return jsonify(redacoes)
 
 
@@ -254,41 +229,21 @@ def create_redacao():
     if 'titulo_redacao' not in redacao_data or 'id_tema' not in redacao_data:
         return jsonify({"error": "Dados insuficientes"}), 400
 
-    redacoes_collection = db.redacoes
-    redacao_id = redacoes_collection.insert_one(redacao_data).inserted_id
-    return jsonify({"message": "Redação criada com sucesso", "redacao_id": str(redacao_id)}), 201
+    database.create_redacoes(redacao_data)
+    return jsonify({"message": "Redação criada com sucesso"}), 201
 
 
 @app.get("/redacoes/<id>")
 def get_redacao_by_id(id):
-    redacoes_collection = db.redacoes
-    redacao = redacoes_collection.find_one({"_id": ObjectId(id)})
-    redacao['_id'] = str(redacao['_id'])
+    redacao = database.get_redacao_by_id(id)
     return jsonify(redacao)
 
 
 @app.put("/redacoes/<id>")
 def update_redacao(id):
-    redacoes_collection = db.redacoes
-
     try:
-        object_id = ObjectId(id)
         data = request.json
-
-        result = redacoes_collection.update_one(
-            {"_id": object_id},
-            {"$set": {
-                "nome_professor": data.get("nome_professor"),
-                "nota_competencia_1_professor": data.get("nota_competencia_1_professor"),
-                "nota_competencia_2_professor": data.get("nota_competencia_2_professor"),
-                "nota_competencia_3_professor": data.get("nota_competencia_3_professor"),
-                "nota_competencia_4_professor": data.get("nota_competencia_4_professor"),
-                "nota_competencia_5_professor": data.get("nota_competencia_5_professor"),
-                "nota_professor": float(data.get("nota_competencia_1_professor")) + float(data.get(
-                    "nota_competencia_2_professor")) + float(data.get("nota_competencia_3_professor")) + float(data.get(
-                    "nota_competencia_4_professor")) + float(data.get("nota_competencia_5_professor")),
-            }}
-        )
+        result = database.update_redacao(id, data)
 
         if result.matched_count == 1:
             if result.modified_count == 1:

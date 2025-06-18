@@ -122,7 +122,7 @@ const Redacao = () => {
       <Modal title='Nota da redação' open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
         {essayGrade ? (
           Object.entries(essayGrade).map(([key, value], index) => (
-            <p key={index}>{key}: {value}</p>
+            <p key={index}>{key}: <strong>{value}</strong></p>
           ))
         ) : (
           <Skeleton paragraph={{ rows: 0 }} />

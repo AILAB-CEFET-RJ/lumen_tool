@@ -6,6 +6,7 @@ services:
       - SUBSCRIPTION_KEY="sua chave sem aspas aqui"
       - ENDPOINT="seu endpoint sem aspas aqui"
       - MONGO_URI=${MONGO_URI}
+      - OLLAMA_HOST=ollama
       #- MONGO_URI=mongodb://root:example@mongodb:27017/flaskdb?authSource=admin
     volumes:
       - ./backend:/app
@@ -28,7 +29,20 @@ services:
     restart: always
     networks:
       - my_custom_network
-
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - my_custom_network
+    restart: unless-stopped
+    command: serve 
 networks:
   my_custom_network:
     driver: bridge
+
+volumes:
+  ollama_data:

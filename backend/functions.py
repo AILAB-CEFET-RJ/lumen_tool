@@ -49,51 +49,6 @@ def evaluate_redacao(redacao):
 
     return notas
 
-def get_llm_feedback(essay,  grades): 
-    return '''
-    
-        ## Pontos Fortes
-        * **Desenvolvimento completo do tema**: A redação mostra um bom domínio do assunto, com abordagem equilibrada dos aspectos positivos e negativos da cultura do cancelamento.
-        * **Estrutura sólida**: Apresenta introdução clara, desenvolvimento coeso e conclusão pertinente.
-        * **Vocabulário adequado e sofisticado**: Termos como *“instrumento de transformação social”* e *“clima de vigilância constante”* demonstram domínio da norma culta.
-        * **Boa progressão textual**: As ideias fluem de forma lógica entre os parágrafos.
-        * **Crítica social bem construída**: A argumentação demonstra maturidade e senso crítico.
-
-        ## Pontos a Melhorar
-        ### 1. **Proposta de Intervenção Incompleta** *(Competência 5)*
-
-        A proposta ao final é válida, mas **genérica**. No ENEM, ela precisa conter:
-        * **Ação**
-        * **Agente** (quem vai executar)
-        * **Meio de execução**
-        * **Finalidade**
-        * **Detalhamento**
-
-        **Sugestão de reescrita do parágrafo final:**
-        > Portanto, cabe ao Ministério da Educação, em parceria com ONGs e escolas, implementar campanhas educativas nas redes sociais e atividades escolares interdisciplinares que promovam o uso consciente da internet e estimulem o diálogo construtivo. Essas ações visam combater práticas punitivistas, incentivar o respeito às diferenças e fomentar o pensamento crítico entre os jovens.
-
-        ### 2. **Falta de Repertório Sociocultural Legitimado** *(Competência 2)*
-        Embora os argumentos sejam bons, a redação não utiliza repertórios reconhecidos, como filósofos, sociólogos, leis, eventos históricos ou obras artísticas.
-
-        **Sugestões de repertório:**
-
-        * **Zygmunt Bauman** e o conceito de *modernidade líquida* — para falar sobre relações frágeis e julgamentos impulsivos.
-        * **Artigo 5º da Constituição** — para embasar a discussão sobre liberdade de expressão.
-        * **Caso Karol Conká no BBB** — como exemplo real de cancelamento que gerou debate público sobre limites da exposição e punição social.
-
-        ### 3. **Aprofundamento das Consequências Sociais** *(Competência 3)*
-        O texto menciona consequências individuais (medo, silenciamento), mas pode aprofundar **impactos sociais mais amplos**, como polarização ou enfraquecimento do debate público.
-
-        **Sugestão de frase para aprofundamento:**
-        > Essa cultura contribui para uma sociedade polarizada, onde o medo de errar paralisa a expressão de ideias e inibe o amadurecimento do debate público.
-
-        ## Considerações Finais
-        A redação apresenta uma escrita madura e bem articulada, com argumentos pertinentes e um posicionamento crítico. Para alcançar uma pontuação ainda mais alta, é importante:
-
-        * Incluir repertórios socioculturais reconhecidos.
-        * Detalhar a proposta de intervenção conforme os critérios exigidos pelo ENEM.
-        * Explorar mais profundamente as implicações sociais da temática.
-    '''
 
 def persist_essay(essay, grades):
     if not os.path.exists('essays'):

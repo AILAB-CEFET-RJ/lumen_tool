@@ -8,3 +8,4 @@ azure-cognitiveservices-vision-computervision
 pillow
 pymongo
 bcrypt
+ollama

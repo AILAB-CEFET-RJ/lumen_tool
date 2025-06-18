@@ -11,7 +11,7 @@ def avaliar_redacao(json_input: str) -> str:
     redacao = data 
 
     # Acessa o primeiro elemento (dicionário) da lista # por enquanto (acima), acessa direto às chaves como se o JSON fossem um único dicionário, só que é uma lista de dicionários (modificar depois)
-    #redacao = data[0] 
+    redacao = data[0] 
 
     # Obtém dados do dicionário da redação
     tema = redacao["tema"]
@@ -70,6 +70,9 @@ def avaliar_redacao(json_input: str) -> str:
         ]
     )
 
+    print(system_prompt)
+    print(user_prompt)
+
     return response["message"]["content"]
     
 
@@ -102,6 +105,3 @@ if __name__ == "__main__":
     else:
         redacao["cometarios"] += "\n\n" + resultado   # Para manter o comentário existente e adicionar novo comentário do ITS
 
-
-    print(resultado)
-    print(resultado)
