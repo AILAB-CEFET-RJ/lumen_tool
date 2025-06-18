@@ -10,7 +10,6 @@ Este projeto visa demonstrar como técnicas modernas de Processamento de Linguag
 ## 📹 Demonstração
 
 - Vídeo no YouTube: [https://youtu.be/RLO5hGGK63c](https://youtu.be/RLO5hGGK63c)
-- Repositório [eduCAPES](https://educapes.capes.gov.br/)
 
 
 ## 📄 Licença
