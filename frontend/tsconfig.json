@@ -15,8 +15,9 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["*"]
     },
+    "baseUrl": "./src",
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
