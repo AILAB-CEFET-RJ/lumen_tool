@@ -58,7 +58,10 @@ const ModalDetalhesTema: React.FC<TemaDetalhes> = ({ open, onCancel, tema, onTem
                 <div>
                     <p><b>Professor</b>: {tema.nome_professor}</p>
                     <p><b>Tema</b>: {tema.tema}</p>
-                    <p><b>Descrição</b>: {tema.descricao}</p>
+                    <p>
+                        <b>Descrição</b>:<br />
+                        <span style={{ whiteSpace: 'pre-line' }}>{tema.descricao}</span>
+                    </p>
                 </div>
             ) : tema && (
                 <div>
