@@ -21,8 +21,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             nomeUsuario: '',
         });
 
-        // Se quiser redirecionar:
-        window.location.href = '/textgrader/login'; // ou use `router.push()` se preferir
+        window.location.href = '/textgrader/login';
     }
 
     const items = isLoggedIn
