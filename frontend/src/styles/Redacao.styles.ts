@@ -23,7 +23,7 @@ const Wrapper = styled.div`
 
 const ButtonWrapper = styled.div`
   margin-top: 2rem;
-  width: 80%;
+  width: 40%;
   display: flex;
   gap: 3rem;
 `

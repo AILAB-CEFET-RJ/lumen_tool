@@ -37,7 +37,8 @@ export interface Redacao {
     _id: string;
     aluno: string;
     comentarios: string;
-    feedback_llm: string
+    feedback_llm: string;
+    feedback_professor: string;
 }
 
 const Home = () => {
@@ -184,7 +185,11 @@ const Home = () => {
                     </Tooltip>
                 ) : 
                 tipoUsuario === 'aluno' && (
-                    <Link href={`/textgrader/redacao?id=${record._id}`}>
+                    <Link href={`/textgrader/redacao?id=${record._id}`} 
+                            onClick={() => {
+                                localStorage.setItem('temaRedacao', record.tema)
+                                localStorage.setItem('descricaoRedacao', record.descricao)
+                            }} >
                       <PlusOutlined style={{ fontSize: '16px', marginRight: '8px' }} />
                       Inserir Nova Redação
                     </Link>
@@ -197,10 +202,20 @@ const Home = () => {
         {
             title: 'Título',
             dataIndex: 'titulo',
-            key: 'titulo', render: (text: string, record: Redacao) =>
-                <Tooltip title={tipoUsuario === 'aluno' ? "Visualizar redação" : "Corrigir redação"}>
-                    <Button type="link" onClick={() => openRedacaoModal(record)}>{text}</Button>
-                </Tooltip>, ellipsis: true ,
+            key: 'titulo',
+            render: (text: string, record: Redacao) => {
+                const titulo = text?.trim() ? text : 'sem título'
+                const tituloLimitado = titulo.length > 40 ? `${titulo.slice(0, 40)}...` : titulo
+
+                return (
+                <Tooltip title={titulo}>
+                    <Button type="link" onClick={() => openRedacaoModal(record)}>
+                    {tituloLimitado}
+                    </Button>
+                </Tooltip>
+                )
+            },
+            ellipsis: true,
         },
         { title: 'Aluno', dataIndex: 'aluno', key: 'aluno', ellipsis: true },
         {

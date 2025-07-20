@@ -102,6 +102,7 @@ def update_redacao(id, data):
             "nota_competencia_3_professor": data.get("nota_competencia_3_professor"),
             "nota_competencia_4_professor": data.get("nota_competencia_4_professor"),
             "nota_competencia_5_professor": data.get("nota_competencia_5_professor"),
+            "feedback_professor": data.get("feedback_professor"),
             "nota_professor": float(data.get("nota_competencia_1_professor")) + float(data.get(
                 "nota_competencia_2_professor")) + float(data.get("nota_competencia_3_professor")) + float(data.get(
                 "nota_competencia_4_professor")) + float(data.get("nota_competencia_5_professor")),

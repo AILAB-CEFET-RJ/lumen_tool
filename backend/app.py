@@ -7,6 +7,7 @@ from llm import get_llm_feedback
 from flask_cors import CORS
 import bcrypt
 import os
+from threading import Thread
 
 app = Flask(__name__)
 CORS(app) 
@@ -34,7 +35,6 @@ def post_model_response():
 
     lines = essay.split('\n')
     title = lines[0] if lines else "Título não fornecido"
-
     rest_of_essay = '\n'.join(line for line in lines[1:] if line.strip())
 
     obj = evaluate_redacao(essay)
@@ -48,7 +48,6 @@ def post_model_response():
     }
 
     theme = database.get_tema(id_theme)
-    feedback_llm = get_llm_feedback(essay, grades, theme)
 
     essay_data = {
         "titulo": title,
@@ -62,18 +61,23 @@ def post_model_response():
         "nota_professor": "",
         "id_tema": id_theme,
         "aluno": student,
-        "feedback_llm": feedback_llm,
+        "feedback_llm": "",
         "competencias": competencias
     }
 
+    essay_id = database.db.redacoes.insert_one(essay_data).inserted_id
 
+    def gerar_feedback():
+        feedback = get_llm_feedback(essay, grades, theme)
+        database.db.redacoes.update_one(
+            {"_id": essay_id},
+            {"$set": {"feedback_llm": feedback}}
+        )
 
-    essays_collection = database.db.redacoes
-    essays_collection.insert_one(essay_data).inserted_id
+    Thread(target=gerar_feedback).start()
 
     response = jsonify({"grades": grades})
     response.headers.add('Access-Control-Allow-Origin', '*')
-
     return response
 
 

@@ -14,16 +14,47 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     const { isLoggedIn, tipoUsuario, nomeUsuario } = useAuth(); 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const items = [
-        {
-            key: '1',
-            label: isLoggedIn ? <span>Seja bem-vindo, {nomeUsuario}</span> : <Link href="/textgrader/login">Entrar</Link>
-        },
-    ];
+    const handleLogout = () => {
+        setAuthData({
+            isLoggedIn: false,
+            tipoUsuario: '',
+            nomeUsuario: '',
+        });
+
+        // Se quiser redirecionar:
+        window.location.href = '/textgrader/login'; // ou use `router.push()` se preferir
+    }
+
+    const items = isLoggedIn
+        ? [
+            {
+                key: '1',
+                label: <span>Seja bem-vindo, {nomeUsuario}</span>,
+            },
+            {
+                key: '2',
+                label: (
+                <span onClick={handleLogout} style={{ cursor: 'pointer', color: '#1677ff' }}>
+                    Sair
+                </span>
+                ),
+            },
+            ]
+        : [
+            {
+                key: '1',
+                label: <Link href="/textgrader/login">Entrar</Link>,
+            },
+        ];
+
 
     const handleMenuClick = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+
+    const { setAuthData } = useAuth();
+
+
 
     return (
         <Layout style={{ minHeight: "100vh" }}>

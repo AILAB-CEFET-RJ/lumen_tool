@@ -1,12 +1,14 @@
 import axios from 'axios'
 import { useRouter } from 'next/router';
-import { useState } from 'react'
-import { Modal, Skeleton } from 'antd'
+import { useState, useEffect } from 'react'
+import { Modal, Skeleton, Collapse } from 'antd'
 import { ClearOutlined, CheckOutlined, UploadOutlined } from '@ant-design/icons'
 import  TextArea from 'antd/lib/input/TextArea'
 import { S } from '@/styles/Redacao.styles'
 import { useAuth } from '../../context';
 import {API_URL} from "@/config/config";
+import { CSSProperties } from 'react'
+
 
 const Redacao = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -16,6 +18,7 @@ const Redacao = () => {
     const router = useRouter();
     const { id } = router.query;
     const { nomeUsuario } = useAuth(); 
+    const { Panel } = Collapse;
 
   const showModalText = async () => {
     await getEssayGrade()
@@ -90,34 +93,58 @@ const Redacao = () => {
     }
   }
 
+  
+  const labelStyle = {
+    marginTop: '20px',
+    marginBottom: '25px',
+    whiteSpace: 'pre-line' as const,
+    width: '50%',
+  }
+
+  const [tema, setTema] = useState<string>('')
+  const [descricaoTema, setDescricaoTema] = useState<string>('')
+
+  useEffect(() => {
+    // Garantir que está no client antes de acessar o localStorage
+    if (typeof window !== 'undefined') {
+      const temaSalvo = localStorage.getItem('temaRedacao')
+      if (temaSalvo) {
+        setTema(temaSalvo)
+      }
+      const descricaoSalvo = localStorage.getItem('descricaoRedacao')
+      if (descricaoSalvo) {
+        setDescricaoTema(descricaoSalvo)
+      }
+    }
+  }, [])
+
   return (
     <S.Wrapper>
       <S.Title>🧾 Redação 🧾</S.Title>
 
-      <label>Ao escrever sua redação, o título deverá estar na primeira linha</label>
+      <Collapse style={labelStyle}>
+        <Panel header="Tema" key="1">
+          <h3>{tema}</h3>
+          <span>{descricaoTema}</span>
+        </Panel>
+      </Collapse>
+
       <TextArea
         value={essay}
         onChange={handleChange}
-        style={{ padding: 24, minHeight: 380, background: 'white', width: '100%' }}
+        style={{ padding: 24, minHeight: 380, background: 'white', width: '50%' }}
         placeholder='Escreva sua redação aqui'
       />
 
       <S.ButtonWrapper>
-        <S.MyButton onClick={clearEssay} size='large' type='primary' danger icon={<ClearOutlined />}>
+        <S.MyButton onClick={clearEssay} size='small' type='primary' danger icon={<ClearOutlined />}>
           Apagar texto
         </S.MyButton>
 
-        <S.MyButton onClick={showModalText} size='large' type='primary' icon={<CheckOutlined />}>
-          Obter nota
+        <S.MyButton onClick={showModalText} size='small' type='primary' icon={<CheckOutlined />}>
+          Enviar redação
         </S.MyButton>
       </S.ButtonWrapper>
-
-      <S.UploadWrapper>
-        <input type="file" onChange={handleFileChange} />
-        <S.MyButton onClick={showModalImage} size='large' type='primary' icon={<UploadOutlined />}>
-          Upload Imagem
-        </S.MyButton>
-      </S.UploadWrapper>
 
       <Modal title='Nota da redação' open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
         {essayGrade ? (

@@ -18,16 +18,31 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(`${API_URL}/userLogin`, {
-                email,
-                password,
+            email,
+            password,
             });
+
             const data = response.data;
-            setAuthData({isLoggedIn: true, tipoUsuario: data.tipoUsuario, nomeUsuario: data.nomeUsuario});
+
+            const auth = {
+            isLoggedIn: true,
+            tipoUsuario: data.tipoUsuario,
+            nomeUsuario: data.nomeUsuario,
+            };
+
+            // Salvar no localStorage
+            localStorage.setItem('authData', JSON.stringify(auth));
+
+            // Salvar no context também
+            setAuthData(auth);
+
             router.push('/textgrader/home');
         } catch (error) {
             console.error('Erro ao fazer login:', error);
+            setErrorMessage('E-mail ou senha inválidos.');
         }
     };
+
 
     return (
         <Layout style={{ minHeight: '50vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -57,5 +72,6 @@ const Login = () => {
         </Layout>
     );
 };
+
 
 export default Login;
