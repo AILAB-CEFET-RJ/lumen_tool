@@ -107,7 +107,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     </Menu.Item>
                 </Menu>
             </Header>
-            <Content style={{ padding: '20px 0' }}>{children}</Content>
+            <Content>{children}</Content>
         </Layout>
     );
 };

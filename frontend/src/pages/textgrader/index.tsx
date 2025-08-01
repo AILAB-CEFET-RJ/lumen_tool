@@ -13,15 +13,9 @@ const Index = () => {
           <S.Title>Text Grader</S.Title>
           <S.Divider />
           <S.Description>
-            Na educação, há várias técnicas para avaliar os estudantes, como itens de múltipla escolha e itens
-            discursivos. Os itens discursivos incluem Essays, semelhantes a redações, e Short Answer, que são respostas
-            curtas. Essays podem ser sobre qualquer tema, mas avaliadores levam em conta aspectos de comunicação e
-            raciocínio. Composition Essays são semelhantes a redações brasileiras, enquanto Examination Essays exigem
-            que os alunos mostrem conhecimento acadêmico e o sintetizem em um curto espaço de tempo. Short Answers
-            avaliam o conhecimento do aluno em tópicos específicos. Exames de larga escala, como o ENEM no Brasil e o
-            NAEP nos EUA, usam itens discursivos, incluindo redações e respostas discursivas. A avaliação automática de
-            itens discursivos é feita por programas de computador que atribuem conceitos a textos escritos em um
-            contexto educacional.
+            A escrita é uma das formas mais poderosas de expressar ideias, defender argumentos e mostrar domínio sobre um tema. Mas avaliar milhares de textos de forma justa, rápida e consistente é um desafio — especialmente em exames de grande escala, como o ENEM no Brasil.
+            Pensando nisso, o TextGrader foi criado: uma ferramenta de avaliação automatizada de redações, desenvolvida com inteligência artificial e treinada para entender as competências exigidas em textos dissertativos-argumentativos. Assim como corretores humanos, o TextGrader analisa a estrutura, a argumentação, a gramática e até a proposta de intervenção — e devolve não apenas uma nota por competência, mas também sugestões práticas para melhorar a escrita.
+            Seja você estudante, professor ou gestor educacional, o TextGrader é seu aliado para tornar o processo de avaliação mais ágil, transparente e formativo.
           </S.Description>
       </S.TextWrapper>
     </S.ContentWrapper>

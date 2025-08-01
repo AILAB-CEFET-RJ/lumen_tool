@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <MainLayout>
-        <Content style={{ padding: '20px 0' }}><Component {...pageProps} /></Content>
+        <Content><Component {...pageProps} /></Content>
       </MainLayout>
     </AuthProvider>
   );

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const ContentWrapper = styled.div`
   display: flex;
-  height: 84.7vh;
+  height: 100vh;
 `
 
 const TextWrapper = styled.div`
