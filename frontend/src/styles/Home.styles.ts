@@ -8,7 +8,7 @@ const ContentWrapper = styled.div`
 const TextWrapper = styled.div`
   display: flex;
   width: 51%;
-  padding: 8%;
+  padding-left: 12%;
   justify-content: center;
   flex-direction: column;
   align-items: center;
