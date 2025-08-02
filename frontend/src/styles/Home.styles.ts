@@ -17,7 +17,7 @@ const TextWrapper = styled.div`
 const ImageContainer = styled.div`
   position: relative;
   object-fit: cover;
-  width: 50%;
+  width: 40%;
   max-width: 100%;
 `
 

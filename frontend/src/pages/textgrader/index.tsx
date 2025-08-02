@@ -1,13 +1,13 @@
 import { S } from '@/styles/Home.styles'
 import Image from 'next/image'
-import BookPagesImg from '../../../public/bookPages.jpg'
+import TextGraderLogo from '../../../public/textgrader-logo.png'
 
 const Index = () => {
   return (
     <S.ContentWrapper>
         <title>TextGrader</title>
       <S.ImageContainer className='ImageContainer'>
-        <Image src={BookPagesImg} alt='Páginas de livros' fill style={{ objectFit: 'cover' }} />
+        <Image src={TextGraderLogo} alt='logo' fill style={{ objectFit: 'cover' }} />
       </S.ImageContainer>
       <S.TextWrapper>
           <S.Title>Text Grader</S.Title>
