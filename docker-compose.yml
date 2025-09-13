@@ -16,7 +16,7 @@ services:
       - my_custom_network
 
   frontend:
-    container_name: textgrader_frontend
+    container_name: lumen_frontend
     image: node:lts-alpine
     working_dir: "/frontend"
     command: sh -c "yarn && yarn prod"

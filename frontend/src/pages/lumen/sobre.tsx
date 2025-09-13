@@ -17,9 +17,9 @@ const Sobre = () => {
         <title>Sobre</title>
         <div style={{maxWidth: '50%', padding: '40px'}}>
           <>
-            <h1 style={{ color: '#1a73e8' }}>Sobre o TextGrader</h1>
+            <h1 style={{ color: '#1a73e8' }}>Sobre o Lumen</h1>
             <p>
-              O <strong>TextGrader</strong> é uma iniciativa acadêmica desenvolvida no&nbsp;
+              O <strong>Lumen</strong> é uma iniciativa acadêmica desenvolvida no&nbsp;
               <a
                 href="https://github.com/AILAB-CEFET-RJ"
                 target="_blank"
@@ -41,7 +41,7 @@ const Sobre = () => {
             <p>
               Seu código-fonte é aberto e pode ser encontrado neste repositório GitHub:&nbsp;
               <a
-                href="https://github.com/AILAB-CEFET-RJ/textgrader_tool"
+                href="https://github.com/AILAB-CEFET-RJ/lumen_tool"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: '#1a73e8' }}

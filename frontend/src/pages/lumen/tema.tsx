@@ -26,7 +26,7 @@ const Tema = () => {
             if (response.ok) {
                 message.success('Tema cadastrado com sucesso!');
                 form.resetFields(); 
-                router.push('/textgrader/home')
+                router.push('/lumen/home')
             } else {
                 message.error('Erro ao cadastrar o tema.');
             }

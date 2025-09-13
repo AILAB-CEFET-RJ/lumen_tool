@@ -41,7 +41,7 @@ const Cadastro = () => {
             setPassword('');
             setTipoUsuario('');
             setNomeUsuario('');
-            router.push('/textgrader/login');
+            router.push('/lumen/login');
         } catch (error) {
             console.error('Erro ao cadastrar usuário:', error);
         }

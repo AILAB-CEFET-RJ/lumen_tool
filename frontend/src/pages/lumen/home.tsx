@@ -185,7 +185,7 @@ const Home = () => {
                     </Tooltip>
                 ) : 
                 tipoUsuario === 'aluno' && (
-                    <Link href={`/textgrader/redacao?id=${record._id}`} 
+                    <Link href={`/lumen/redacao?id=${record._id}`} 
                             onClick={() => {
                                 localStorage.setItem('temaRedacao', record.tema)
                                 localStorage.setItem('descricaoRedacao', record.descricao)
@@ -235,7 +235,7 @@ const Home = () => {
                     <TabPane tab="Temas" key="1">
                         <Space style={{ marginBottom: 16 }}>
                             {tipoUsuario === 'professor' && (
-                                <Link href="/textgrader/tema">
+                                <Link href="/lumen/tema">
                                     <Button type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>
                                         Adicionar Tema
                                     </Button>

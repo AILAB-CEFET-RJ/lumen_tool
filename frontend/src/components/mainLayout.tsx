@@ -21,7 +21,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             nomeUsuario: '',
         });
 
-        window.location.href = '/textgrader/login';
+        window.location.href = '/lumen/login';
     }
 
     const items = isLoggedIn
@@ -42,7 +42,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         : [
             {
                 key: '1',
-                label: <Link href="/textgrader/login">Entrar</Link>,
+                label: <Link href="/lumen/login">Entrar</Link>,
             },
         ];
 
@@ -64,8 +64,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     defaultSelectedKeys={['2']}
                 >
                     <Menu.Item>
-                        <Link href="/textgrader">
-                            TextGrader
+                        <Link href="/lumen">
+                            Lumen
                         </Link>
                     </Menu.Item>
                     {isLoggedIn === false ? (
@@ -78,18 +78,18 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         </Tooltip>
                     ) : (
                         <Menu.Item>
-                            <Link href="/textgrader/home">
+                            <Link href="/lumen/home">
                                 Home
                             </Link>
                         </Menu.Item>
                     )}
                     <Menu.Item>
-                        <Link href="/textgrader/competencias">
+                        <Link href="/lumen/competencias">
                             Competências
                         </Link>
                     </Menu.Item>
                     <Menu.Item>
-                        <Link href="/textgrader/sobre">
+                        <Link href="/lumen/sobre">
                             Sobre
                         </Link>
                     </Menu.Item>

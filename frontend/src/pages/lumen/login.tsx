@@ -36,7 +36,7 @@ const Login = () => {
             // Salvar no context também
             setAuthData(auth);
 
-            router.push('/textgrader/home');
+            router.push('/lumen/home');
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             setErrorMessage('E-mail ou senha inválidos.');
@@ -66,7 +66,7 @@ const Login = () => {
                     <Button type="primary" onClick={handleLogin}>Entrar</Button>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <Typography.Text>Não possui uma conta? Cadastre-se <Link href="/textgrader/cadastro">aqui</Link>.</Typography.Text>
+                    <Typography.Text>Não possui uma conta? Cadastre-se <Link href="/lumen/cadastro">aqui</Link>.</Typography.Text>
                 </div>
             </Content>
         </Layout>
