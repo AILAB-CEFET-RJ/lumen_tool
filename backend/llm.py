@@ -1,7 +1,9 @@
 import ollama
 import json
+from openai import OpenAI
 
-ollama_client = ollama.Client(host='http://ollama:11434')
+#ollama_client = ollama.Client(host='http://ollama:11434')
+client = OpenAI()
 
 def get_system_prompt(competencias_str):
     return (
@@ -41,10 +43,8 @@ def get_llm_feedback(essay, grades, theme) -> str:
         for k, v in grades.items()
     ])
 
-    # Monta o system prompt
     system_prompt = get_system_prompt(competencias_str)
 
-    # Monta o user prompt
     competencias_str_user = "\n".join([
         f"Competência: Nota {v} | {k}"
         for k, v in grades.items()
@@ -52,7 +52,17 @@ def get_llm_feedback(essay, grades, theme) -> str:
 
     user_prompt = get_user_prompt(theme, essay, competencias_str_user)
 
-    # Chamada ao modelo via Ollama
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0.3,
+    )
+    return resp.choices[0].message.content
+
+    '''
     response = ollama_client.chat(
         model="gemma:7b",
         messages=[
@@ -60,6 +70,8 @@ def get_llm_feedback(essay, grades, theme) -> str:
             {"role": "user", "content": user_prompt}
         ]
     )
+    
 
     return response["message"]["content"]
+    '''
     

@@ -9,3 +9,4 @@ pillow
 pymongo
 bcrypt
 ollama
+openai
